@@ -5,6 +5,10 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetTitleMatchMode 2   ;sets window title matching (for #IfWinActive) to partial matches
 
+; add file explorer to a group called 'Explorer', as it has multiple ahk classes
+GroupAdd, Explorer, ahk_class CabinetWClass
+GroupAdd, Explorer, ahk_class ExploreWClass
+Return
 ;=====================================================================================================
 ;=====================================================================================================
 
@@ -12,22 +16,46 @@ SetTitleMatchMode 2   ;sets window title matching (for #IfWinActive) to partial 
 ; F KEYS
 ;-------------------------
 
-f1:: Run C:\Users\User\OneDrive - Haast Energy Trading\Documents
-f2:: Run C:\Users\User\OneDrive - Haast Energy Trading\Documents\onboarding docs\windfarm model\ ;temporarily point to main folder i'm working in
-^f2:: Run C:\Windows\system32\notepad.exe
-f8:: Send {LWin}
-;f9:: Send !{tab}
-f5:: Send !{f4}				
-F12:: Run C:\Program Files\Google\Chrome\Application\chrome.exe
-F7:: Run C:\Users\User\AppData\Local\Microsoft\WindowsApps\Slack.exe
-f9:: 
- Run C:\Windows\system32\SnippingTool.exe
- Sleep 200
- WinActivate "Snipping Tool"
-Send ^n
+f1:: 
+  Send {LWin}
+  Sleep 100
+  Send Focus
+  Sleep 100
+  Send {enter}
 Return
 
-; Rstudio: switch to open program if there is one, otherwise open
+;f1:: Run C:\dev\r
+f2:: Run C:\Users\User\OneDrive - Haast Energy Trading\Documents\onboarding docs\windfarm model\ ;temporarily point to main folder i'm working in
+f3:: Run C:\Users\User\OneDrive - Haast Energy Trading\Documents\onboarding docs
+;f9:: Send !{tab}
+f5:: Send !{f4}				
+F7:: Run C:\Users\User\AppData\Local\Microsoft\WindowsApps\Slack.exe
+
+f8:: ; winkey, because not working on keyboard. Plus extra code to stop Dragon popping up
+ Send {LWin}
+ Sleep 500
+ Send a
+ Sleep 500
+ Send {backspace}
+Return
+
+f9:: 
+ Run C:\Windows\system32\SnippingTool.exe
+ Sleep 1000
+ WinActivate "Snipping Tool"
+ Sleep 1000
+ Send ^n
+Return
+
+; CHROME: switch to open program if there is one, otherwise open
+f12:: 
+if WinExist("Chrome")
+  WinActivate 
+else
+  Run C:\Program Files\Google\Chrome\Application\chrome.exe
+Return
+
+; RSTUDIO: switch to open program if there is one, otherwise open
 ^f1:: 
 if WinExist("RStudio")
   WinActivate 
@@ -35,9 +63,35 @@ else
   Run C:\Program Files\RStudio\bin\rstudio.exe
 Return
 
+; NOTEPAD: switch to open program if there is one, otherwise open
+^f2:: 
+if WinExist("Notepad")
+  WinActivate 
+else
+  Run C:\Windows\system32\notepad.exe
+Return
+
+; WORD: switch to open program if there is one, otherwise open
+^f3:: 
+if WinExist("Word")
+  WinActivate 
+else
+  Run "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE"
+Return
+
+; FILE EXPLORER: switch to open program if there is one, otherwise open
+^f4:: 
+if WinExist("ahk_group Explorer") ;group is defined at top of script
+  WinActivate 
+else
+  Send #{e}
+Return
+
 ;-------------------------
 ; HOTKEYS
 ;-------------------------
+
+:*:`;tj::{enter}{enter}Thanks,{enter}{enter}Jay
 
 :*:`;cf:: ;confluence. "general" and "r" spaces only are relevant to me
  Run C:\Program Files\Google\Chrome\Application\chrome.exe https://haastenergy.atlassian.net/wiki/spaces
@@ -102,6 +156,15 @@ Return
 ;-------------------------
 ; MODIFIER KEYS
 ;-------------------------
+
+; Because Dragon is a pain with the Windows key, add a quick letter and backspace to stop Dragon opening
+LWin::
+ Send {LWin}
+ Sleep 500
+ Send a
+ Sleep 500
+ Send {backspace}
+Return
 
 ; remap winkey + xxx keys to right control (keyboard winkey not working)  
 >^up::  
@@ -205,6 +268,15 @@ Return
 ;-------------------------
 ; Other Rstudio commands
 ;-------------------------
+
+^+a:: ; change appearance
+ Send !t
+ Sleep 200
+ Send g
+ Sleep 400
+ Send {down 3}
+; Send {enter}
+Return
 
 ^w::
  Send ^{w}				;close tab
